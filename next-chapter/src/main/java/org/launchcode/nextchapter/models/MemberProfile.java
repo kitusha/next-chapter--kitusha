@@ -1,80 +1,51 @@
 package org.launchcode.nextchapter.models;
 
 import jakarta.persistence.*;
+
 import java.util.List;
 
 @Entity
 public class MemberProfile {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private List<Club> Clubs;
 
-    private String name;
-    private String email;
-    private final String role;
-    private String book;
+    //@Getter
+    //@Setter
+   // @NoArgsConstructor
+   // @AllArgsConstructor
+    @Entity
+    @Table(name= "MemberProfile")
+    public class Employee {
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
+        private long id;
 
-    @ManyToMany
-    @JoinTable(name = "member_profile_club",
-            joinColumns = @JoinColumn(name = "member_profile_id"),
-            inverseJoinColumns = @JoinColumn(name = "club_id"))
-    private List<Club> clubs;
 
-    // Constructors, getters, and setters (you can use Lombok to simplify)
+        @Column(name = "first_name")
+        private String firstName; // Note: Java String should be capitalized
 
-    // Default constructor
-    public MemberProfile(String role) {
-        this.role = role;
+        @Column(name = "last_name") // Corrected quotation marks
+        private String lastName; // Note: Java String should be capitalized
+
+        @Column(name = "email_id")
+        private String emailId; // Note: Java String should be capitalized
+
+        public String getEmailId(String emailId) {
+            return emailId;
+        }
+
+        // Getters and setters (or use Lombok for automatic generation)
+        // Constructor(s), additional methods, etc.
     }
 
-    // Parameterized constructor
-    public MemberProfile(String name, String email, String role) {
-        this.name = name;
-        this.email = email;
-        this.role = role;
-        this.book = book;
-    }
-
-    // Getters and setters for all fields
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return book;
-    }
-
-    public void setRole(String role) {
-        this.book = role;
-    }
 
     public List<Club> getClubs() {
-        return clubs;
+        List<Club> clubs;
+        List<Club> Club = null;
+        return Club;
     }
 
     public void setClubs(List<Club> clubs) {
-        this.clubs = clubs;
+        this.Clubs = clubs;
     }
 }
