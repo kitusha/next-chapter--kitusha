@@ -1,65 +1,69 @@
 package org.launchcode.nextchapter.controllers;
 
-
 import org.launchcode.nextchapter.data.MemberProfileRepository;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.launchcode.nextchapter.models.MemberProfile;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.yaml.snakeyaml.events.Event;
 
-import java.util.ArrayList;
 import java.util.List;
 
+//import static com.sun.tools.javax.main.Option.X;
+
 @RestController
-@RequestMapping("/api/profiles")
+@RequestMapping("/api/v1/member-profiles")
 public class MemberProfileController {
 
-    public final MemberProfileRepository profileRepository;
+    @Autowired
+    private MemberProfileRepository memberProfileRepository;
 
-     MemberProfileController(MemberProfileRepository profileRepository) {
-        this.profileRepository = profileRepository;
+    @GetMapping
+    public List<MemberProfile> getAllMemberProfiles() {
+        return (List<MemberProfile>) memberProfileRepository.findAll();
     }
 
-    public MemberProfileRepository getProfileRepository() {
-        return profileRepository;
+    @PostMapping
+    public MemberProfile createMemberProfile(@RequestBody MemberProfile memberProfile) {
+        return memberProfileRepository.save(memberProfile);
     }
 
-    public class Member {
-        private String email;
-        private String password;
-        private String displayName;
-        private List<String> clubsJoined;
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberProfile> getMemberProfileById(@PathVariable Long id) {
+        MemberProfile memberProfile = memberProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Member Profile not found with id: " + id));
+        return ResponseEntity.ok(memberProfile);
+    }
 
-        public Member(String email, String password, String displayName) {
-            this.email = email;
-            this.password = password;
-            this.displayName = displayName;
-            this.clubsJoined = new ArrayList<>();
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<MemberProfile> updateMemberProfile(@PathVariable Long id, @RequestBody MemberProfile memberProfileDetails) {
+        MemberProfile updateMemberProfile = memberProfileRepository.findById(id.intValue())
+                .orElseThrow(() -> new ResourceNotFoundException("Member Profile not found with id: " + id));
+        updateMemberProfile.setFirstName(memberProfileDetails.getFirstName());
+        updateMemberProfile.setLastName(memberProfileDetails.getLastName());
+        updateMemberProfile.setEmailId(memberProfileDetails.getEmailId());
 
-        public void updateEmail(String newEmail) {
-            this.email = newEmail;
-        }
+        memberProfileRepository.save(updateMemberProfile);
+        return ResponseEntity.ok(updateMemberProfile);
+    }
 
-        public void updatePassword(String newPassword) {
-            this.password = newPassword;
-        }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteMemberProfile(@PathVariable int id) {
+        MemberProfile memberProfile = memberProfileRepository.findById(getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Member Profile not exist with id: " + id));
 
-        public void updateDisplayName(String newDisplayName) {
-            this.displayName = newDisplayName;
-        }
+        memberProfileRepository.delete(memberProfile);
 
-        public void joinClub(String clubName) {
-            clubsJoined.add(clubName);
-        }
+        return ResponseEntity.noContent().build();
+    }
 
-        public void deleteAccount() {
-            // Perform account deletion logic
-        }
+    private static Long getId(Long id){
+        return id;
+    }
 
-        public String getDisplayName() {
-            return displayName;
+    private class ResourceNotFoundException extends MemberProfile{
+        public ResourceNotFoundException(String s){
         }
-
-        public List<String> getClubsJoined() {
-            return clubsJoined;
-        }
-    }}
+    }
+}
